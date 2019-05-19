@@ -4,25 +4,29 @@ const style = {
     top: '20px' 
 }
 
-class Filters extends React.Component {
+const Filter = props => {
+    
+        return (
+          <div style={style} className="ui form" >
+            <div>
+                <label>Sort by: </label>
+                <select onChange={event => props.updateSort(event.target.value)} defaultValue='no sorting'>
+                    <option value='name'>name</option>
+                    <option value='weight'>weight</option>
+                </select>
+            </div>
+            <div>
+                <label>Greased:</label>
+                <input onClick={props.showGreased} type="checkbox" />
+              </div>
+
+          </div>
+        )
+      }
+
 
  
-  render() {
-    return (
-      <div style={style} onChange={this.props.handleFilter} className="ui form" >
-        <h3>Greased?</h3>
-        <div className="field">
-          <select  name="type" id="type" >
-            <option value="all">All</option>
-            <option value="greased">Greased</option>
-            <option value="name">A-z</option>
-            <option value="weight">Greasy</option>
+  
 
-          </select>
-        </div>
-      </div>
-    )
-  }
-}
 
-export default Filters
+export default Filter

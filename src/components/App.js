@@ -10,43 +10,48 @@ import Filter from './Filter'
 class App extends Component {
   
   state = {
-    hogs: hogs, 
-    filtered: {
-      type: 'all'
-    },
+    hogs: [], 
+    sort: '',
+    greased: false,
     selectedHog: null
   }
 
-  handleFilter = (event) => {
-    const type = event.target.value
-    const greasedHogs = this.state.hogs.filter(hog => hog.greased === true)
-    const hogsNames = this.state.hogs.map(hog => hog.name)
-    const alphabetHogs = hogsNames.sort()
-    console.log(alphabetHogs)
+  getHogs = () => {
+    this.setState({hogs})
+  }
 
-    if (type === 'greased') {
-      this.setState({
-        filtered: {type: type },
-        hogs: greasedHogs
-      }) 
-    }
-    else if (type === 'A-z'){
-      // sort alphabetically
-      this.setState({
-        filtered: {type: type },
-        hogs: {...hogs, name: alphabetHogs}
-      }) 
+  componentDidMount() {
+    this.getHogs()
+  }
 
+  updateSort = (sort) => {
+    this.setState({sort})
+  }
+
+  handleClickGreased = () => {
+    this.setState({greased: !this.state.greased})
+  }
+
+   get handleFilterAndSortHogs() {
+    const {greased, sort, hogs } = this.state
+
+    const weight = 'weight as a ratio of hog to LG - 24.7 Cu. Ft. French Door Refrigerator with Thru-the-Door Ice and Water'
+    const hogsCopy = [...hogs]
+    
+    // sort by name
+    if (sort === 'name'){
+      hogsCopy.sort((a, b) => a.name.localeCompare(b.name))
     }
-    else if (type === 'Greasy'){
-      // sort by weight
+    if (sort === 'weight'){
+      hogsCopy.sort((a, b) => {
+        if (a[weight] > b[weight]) return 1
+        if (a[weight] < b[weight]) return -1
+        return 0
+      })
     }
-    else {     
-      this.setState({
-        filtered: {type: type},
-        hogs: hogs
-      }) 
-    }
+
+    return greased ? hogsCopy.filter(hog => hog.greased) : hogsCopy
+    
   }
 
   handleClick = (hog) => {
@@ -62,27 +67,32 @@ class App extends Component {
   }
   
   render() {
+    const {updateSort, handleClickGreased, handleClickBack, handleClick, handleFilterAndSortHogs} = this
     return (
       <div className="App">
         <div className='header'>
           < Nav />
         </div>
         <div className='filter'>
-        < Filter handleFilter={this.handleFilter}/>
+        < Filter 
+          updateSort={updateSort}
+          showGreased={handleClickGreased}
+
+        />
         </div>
         <div className='container'>
        
         {
           this.state.selectedHog === null 
           ? < HogList 
-                hogs={this.state.hogs}
+                hogs={handleFilterAndSortHogs}
                 selectedHog={this.state.selectedHog}
-                handleClick={this.handleClick}
+                handleClick={handleClick}
                 
             />
-          : <HogDetails
+          : < HogDetails
                 hog={this.state.selectedHog}   
-                handleClickBack={this.handleClickBack}
+                handleClickBack={handleClickBack}
 
             />
         }    

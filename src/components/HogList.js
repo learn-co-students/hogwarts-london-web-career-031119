@@ -16,7 +16,7 @@ class HogList extends Component {
         const hog = this.props.hogs.map(hog => 
         <Hog 
             hog={hog} 
-            serializedName={hog.name.toLowerCase().split(' ').join('_') + '.jpg'}
+            serializedName={hog.name.toLowerCase().replace(/ /g, '_')+ '.jpg'}
             handleClick={this.props.handleClick}
             selectedHog={this.props.selectedHog}            
         />  
